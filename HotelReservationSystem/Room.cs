@@ -14,6 +14,11 @@ public class Room
     public string View {  get; set; }
     public string Bedtype { get; set; }
 
+    public Room()
+    {
+
+    }
+
 
     public Room(int roomNumber, string roomType, double pricePerNight, string view, string bedtype)
     {

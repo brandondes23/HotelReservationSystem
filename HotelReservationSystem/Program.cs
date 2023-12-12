@@ -1,8 +1,8 @@
-﻿namespace HotelReservationSystem;
+﻿using System.ComponentModel.Design;
+
+namespace HotelReservationSystem;
 
 internal class Program
 {
-
-        
 
 }

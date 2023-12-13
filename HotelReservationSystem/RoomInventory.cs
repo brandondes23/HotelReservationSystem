@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace HotelReservationSystem;
 
 
-public class RoomInventory
+public class RoomInventory // Keeps track of the available rooms
 {
     public DateTime Date { get; set; }
     public int AvailableRooms { get; set; }
@@ -19,26 +19,26 @@ public class RoomInventory
     }
 }
 
-public class Hotel
+public class Hotel // 
 {
-    private List<RoomInventory> roomInventories;
+    private List<RoomInventory> roomInventories; // creates a list of available rooms
 
-    public Hotel()
+    public Hotel() // Constructor for hotel class
     {
         roomInventories = new List<RoomInventory>();
     }
 
-    public void AddRoomInventory(RoomInventory roomInventory)
+    public void AddRoomInventory(RoomInventory roomInventory) // Adds room to the list
     {
         roomInventories.Add(roomInventory);
     }
 
-    public List<RoomInventory> GetAvailableRooms(DateTime date)
+    public List<RoomInventory> GetAvailableRooms(DateTime date) // Gets the dates for available rooms
     {
 
         RoomInventory inventory = roomInventories.Find(room => room.Date == date);
 
-        if (inventory != null)
+        if (inventory != null) 
         {
 
             return new List<RoomInventory> { inventory };

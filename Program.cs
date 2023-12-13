@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace HotelReservationSystem
@@ -6,6 +6,7 @@ namespace HotelReservationSystem
     class Program
     {
         private static List<Reservation> reservations;
+        private static Guest authenticatedGuest;
 
         static void Main(string[] args)
         {
@@ -35,10 +36,9 @@ namespace HotelReservationSystem
         static void Menu()
         {
             bool done = false;
-
             while (!done)
             {
-                Console.WriteLine("Options: Reserve Room - 1, View Reservations - 2, Exit - 3");
+                Console.WriteLine("Options: Reserve Room - 1, View Reservations - 2, Login - 3, Logout - 4, Exit - 5, Clear Screen - 6");
                 Console.Write("Choice: ");
                 string choice = Console.ReadLine();
 
@@ -51,7 +51,16 @@ namespace HotelReservationSystem
                         ViewReservations();
                         break;
                     case "3":
+                        LoginMenu();
+                        break;
+                    case "4":
+                        LogoutMenu();
+                        break;
+                    case "5":
                         done = true;
+                        break;
+                    case "6":
+                        Console.Clear();
                         break;
                     default:
                         Console.WriteLine("Invalid command!");
@@ -62,14 +71,21 @@ namespace HotelReservationSystem
 
         static void ReserveRoomMenu()
         {
-            Console.Write("Enter your first name: ");
-            string firstName = Console.ReadLine();
-            Console.Write("Enter your last name: ");
-            string lastName = Console.ReadLine();
+            if (authenticatedGuest == null)
+            {
+                Console.WriteLine("You need to log in to make a reservation.");
+                return;
+            }
 
             Console.Write("Enter room type (Single/Double): ");
             string roomTypeInput = Console.ReadLine();
             Enum.TryParse(roomTypeInput, out RoomType roomType);
+
+            Console.Write("Enter room view: ");
+            string roomView = Console.ReadLine();
+
+            Console.Write("Enter bed type: ");
+            string bedType = Console.ReadLine();
 
             Console.Write("Enter check-in date (yyyy-MM-dd): ");
             DateTime checkInDate = DateTime.Parse(Console.ReadLine());
@@ -77,13 +93,11 @@ namespace HotelReservationSystem
             Console.Write("Enter check-out date (yyyy-MM-dd): ");
             DateTime checkOutDate = DateTime.Parse(Console.ReadLine());
 
-            var guest = new Guest(firstName, lastName);
-            var room = new Room("100", roomType);
-
-            var reservation = new Reservation(reservations.Count + 1, guest, room, checkInDate, checkOutDate);
+            var room = new Room("100", roomType, roomView, bedType);
 
             if (IsRoomAvailable(room, checkInDate, checkOutDate))
             {
+                var reservation = new Reservation(reservations.Count + 1, authenticatedGuest, room, checkInDate, checkOutDate);
                 reservations.Add(reservation);
                 Console.WriteLine($"Reservation successful! Reservation ID: {reservation.ReservationID}");
             }
@@ -95,17 +109,25 @@ namespace HotelReservationSystem
 
         static void ViewReservations()
         {
-            Console.WriteLine("All Reservations:");
+            if (authenticatedGuest == null)
+            {
+                Console.WriteLine("You are not logged in. Please log in to view reservations.");
+                return;
+            }
 
-            if (reservations.Count == 0)
+            Console.WriteLine($"Reservations for {authenticatedGuest.FullName}:");
+
+            var guestReservations = reservations.Where(r => r.Guest == authenticatedGuest);
+
+            if (guestReservations.Count() == 0)
             {
                 Console.WriteLine("No reservations found.");
             }
             else
             {
-                foreach (var reservation in reservations)
+                foreach (var reservation in guestReservations)
                 {
-                    Console.WriteLine($"Reservation ID: {reservation.ReservationID}, Guest: {reservation.Guest.FullName}, Room: {reservation.Room.RoomNumber}, Dates: {reservation.CheckInDate:yyyy-MM-dd} to {reservation.CheckOutDate:yyyy-MM-dd}");
+                    Console.WriteLine($"Reservation ID: {reservation.ReservationID}, Type: {reservation.Room.RoomType}, View: {reservation.Room.View}, Bed Type: {reservation.Room.Bedtype}, Dates: {reservation.CheckInDate:yyyy-MM-dd} to {reservation.CheckOutDate:yyyy-MM-dd}");
                 }
             }
         }
@@ -122,6 +144,23 @@ namespace HotelReservationSystem
             }
             return true; // Room is available
         }
+
+        static void LoginMenu()
+        {
+            Console.Write("Enter your first name: ");
+            string firstName = Console.ReadLine();
+            Console.Write("Enter your last name: ");
+            string lastName = Console.ReadLine();
+
+            authenticatedGuest = new Guest(firstName, lastName);
+            Console.WriteLine($"Welcome, {authenticatedGuest.FullName}!");
+        }
+
+        static void LogoutMenu()
+        {
+            authenticatedGuest = null;
+            Console.WriteLine("Logged out!");
+        }
     }
 
     enum RoomType
@@ -132,13 +171,37 @@ namespace HotelReservationSystem
 
     class Room
     {
-        public string RoomNumber { get; }
-        public RoomType Type { get; }
+        private string v1;
+        private RoomType @double;
+        private string v2;
+        private string v3;
+        private string v;
+        private RoomType single;
 
-        public Room(string roomNumber, RoomType type)
+        public string RoomType { get; set; }
+        public string View { get; set; }
+        public string Bedtype { get; set; }
+
+        public Room(int v, string roomType, double pricePerNight, string view, string bedType)
         {
-            RoomNumber = roomNumber;
-            Type = type;
+
+            RoomType = roomType;
+            View = view;
+            Bedtype = bedType;
+        }
+
+        public Room(string v1, RoomType @double, string v2, string v3)
+        {
+            this.v1 = v1;
+            this.@double = @double;
+            this.v2 = v2;
+            this.v3 = v3;
+        }
+
+        public Room(string v, RoomType single)
+        {
+            this.v = v;
+            this.single = single;
         }
     }
 
@@ -174,4 +237,6 @@ namespace HotelReservationSystem
         }
     }
 }
+
+
 

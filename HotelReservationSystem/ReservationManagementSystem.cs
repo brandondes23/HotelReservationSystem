@@ -3,15 +3,16 @@ using System.Collections.Generic;
 
 namespace SunsetHotelReservationSystem
 {
-    class ReservationManagementSystem
+    class ReservationManagementSystem //define class "ReservationManagementSystem"
     {
-        private List<Reservation> reservations;
+        private List<Reservation> reservations; //store a list of reservations
 
-        public ReservationManagementSystem()
+        public ReservationManagementSystem() //constructor 
         {
             reservations = new List<Reservation>();
         }
 
+        //method to create new reservation
         public void CreateReservation(Guest guest, Room room, DateTime checkInDate, DateTime checkOutDate)
         {
             int reservationID = GenerateReservationID();
@@ -28,7 +29,7 @@ namespace SunsetHotelReservationSystem
                 Console.WriteLine("Sorry, the selected room is not available for the specified dates.");
             }
         }
-
+        //Method to modify existing reservation
         public void ModifyReservation(int reservationID, DateTime newCheckInDate, DateTime newCheckOutDate)
         {
             Reservation reservation = FindReservation(reservationID);
@@ -52,7 +53,7 @@ namespace SunsetHotelReservationSystem
                 Console.WriteLine($"Reservation with ID {reservationID} not found.");
             }
         }
-
+        //Method to cancel existing reservation
         public void CancelReservation(int reservationID)
         {
             Reservation reservation = FindReservation(reservationID);
@@ -67,13 +68,13 @@ namespace SunsetHotelReservationSystem
                 Console.WriteLine($"Reservation with ID {reservationID} not found.");
             }
         }
-
+        
         private int GenerateReservationID()
         { 
 
             return reservations.Count + 1;
         }
-
+        
         private bool IsRoomAvailable(Room room, DateTime checkInDate, DateTime checkOutDate)
         {
             // Check if the room is available for the specified dates
@@ -87,7 +88,7 @@ namespace SunsetHotelReservationSystem
             }
             return true; // Room is available
         }
-
+        //private method to find a reservation based off the ID
         private Reservation FindReservation(int reservationID)
         {
             return reservations.Find(reservation => reservation.ReservationID == reservationID);
